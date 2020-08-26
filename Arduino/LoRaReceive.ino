@@ -40,18 +40,14 @@ String batteryUrl = url + "/battery";
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
 
-String LoRaData;
+HTTPClient http;
 
+String LoRaData;
 const size_t incomingCapacity = JSON_OBJECT_SIZE(3) + 40;
 DynamicJsonDocument incomingDoc(incomingCapacity);
 
 const size_t weatherCapacity = JSON_OBJECT_SIZE(2);
-DynamicJsonDocument weatherDoc(weatherCapacity);
-String weatherOutput = "";
-
 const size_t voltageCapacity = JSON_OBJECT_SIZE(1);
-DynamicJsonDocument voltageDoc(voltageCapacity);
-String voltageOutput = "";
 
 void connectWiFi(){
   // Connect to Wi-Fi network with SSID and password
@@ -115,22 +111,8 @@ void setup() {
   display.display();  
 
   connectWiFi();
-
- 
 }
 
-void writeToApi() {
-  HTTPClient http;
-  http.begin(weatherUrl);
-  http.addHeader("Content-Type", "application/json");
-  http.POST(weatherOutput);
-  http.end();
-  
-  http.begin(batteryUrl);
-  http.addHeader("Content-Type", "application/json");
-  http.POST(voltageOutput);
-  http.end();
-}
 
 void loop() {
 
@@ -165,13 +147,38 @@ void loop() {
      display.setCursor(30,40);
      display.print(rssi);
      display.display();   
-  
+
+    StaticJsonDocument<weatherCapacity> weatherDoc;
+    StaticJsonDocument<voltageCapacity> voltageDoc;
+   
     weatherDoc["celsius"] = celsius;
     weatherDoc["relative_humidity"] = relative_humidity;
     voltageDoc["voltage"] = voltage;
-    
+
+    String weatherOutput;
+    String voltageOutput;
+
     serializeJson(weatherDoc, weatherOutput);  
     serializeJson(voltageDoc, voltageOutput);
-    writeToApi();
+
+    int responseCode = 0;
+    Serial.println("POST");
+    Serial.println(weatherUrl);
+    Serial.println(weatherOutput);
+    http.begin(weatherUrl);
+    http.addHeader("Content-Type", "application/json");
+    responseCode = http.POST(weatherOutput);
+    Serial.println(responseCode);
+    http.end();
+  
+    Serial.println("POST");
+    Serial.println(batteryUrl);
+    Serial.println(voltageOutput);
+    http.begin(batteryUrl);
+    http.addHeader("Content-Type", "application/json");
+    responseCode = http.POST(voltageOutput);
+    Serial.println(responseCode);
+    http.end();
+
   }
 }
