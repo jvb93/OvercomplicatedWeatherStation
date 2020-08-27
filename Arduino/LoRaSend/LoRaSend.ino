@@ -20,6 +20,10 @@
 AXP20X_Class axp;
 Adafruit_SHT31 sht31 = Adafruit_SHT31();
 
+String weatherOutput;
+String voltageOutput;
+
+
 void setup()
 {
     Serial.begin(115200);
@@ -70,7 +74,7 @@ void setup()
 
     // send data
     LoRa.beginPacket();
-    LoRa.printf("{\"celsius\": %.2f, \"relative_humidity\": %.2f, \"voltage\": %.2f}",t ,h, v);
+    LoRa.printf("%.2f|%.2f|%.2f",t ,h, v);
     LoRa.endPacket();
 
     // wait for packet send to complete and then go to sleep

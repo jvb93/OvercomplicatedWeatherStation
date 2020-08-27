@@ -1,7 +1,5 @@
 #include "Secrets.h"
 
-#include <ArduinoJson.h>
-
 //Libraries for LoRa
 #include <SPI.h>
 #include <LoRa.h>
@@ -41,14 +39,6 @@ String batteryUrl = url + "/battery";
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
 
 HTTPClient http;
-
-String LoRaData;
-const size_t incomingCapacity = JSON_OBJECT_SIZE(3) + 40;
-DynamicJsonDocument incomingDoc(incomingCapacity);
-
-const size_t weatherCapacity = JSON_OBJECT_SIZE(2);
-const size_t voltageCapacity = JSON_OBJECT_SIZE(1);
-
 void connectWiFi(){
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Connecting to ");
@@ -113,72 +103,91 @@ void setup() {
   connectWiFi();
 }
 
-
-void loop() {
-
-  //try to parse packet
+bool tryReceivePacket(char* packet) {
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
     //received a packet
     //read packet
+
+    int index = 0;
     while (LoRa.available()) {
-      LoRaData = LoRa.readString();
-      Serial.println(LoRaData);
+      packet[index] = (char)LoRa.read();
+      index++;
     }
-    //print RSSI of packet
-    int rssi = LoRa.packetRssi();
-  
-    deserializeJson(incomingDoc, LoRaData);
-    
-    int voltage = incomingDoc["voltage"]; // 3790
-    float celsius = incomingDoc["celsius"]; // 25.25
-    float relative_humidity = incomingDoc["relative_humidity"]; // 45.543
-  
-     // Display information
-     display.clearDisplay();
-     display.setCursor(0,0);
-     display.printf("C: %.2f", celsius);
-     display.setCursor(0,20);
-     display.printf("RH: %.2f", relative_humidity);
-     display.setCursor(0,30);
-     display.printf("mV: %d", voltage);
-     display.setCursor(0,40);
-     display.print("RSSI:");
-     display.setCursor(30,40);
-     display.print(rssi);
-     display.display();   
-
-    StaticJsonDocument<weatherCapacity> weatherDoc;
-    StaticJsonDocument<voltageCapacity> voltageDoc;
-   
-    weatherDoc["celsius"] = celsius;
-    weatherDoc["relative_humidity"] = relative_humidity;
-    voltageDoc["voltage"] = voltage;
-
-    String weatherOutput;
-    String voltageOutput;
-
-    serializeJson(weatherDoc, weatherOutput);  
-    serializeJson(voltageDoc, voltageOutput);
-
-    int responseCode = 0;
-    Serial.println("POST");
-    Serial.println(weatherUrl);
-    Serial.println(weatherOutput);
-    http.begin(weatherUrl);
-    http.addHeader("Content-Type", "application/json");
-    responseCode = http.POST(weatherOutput);
-    Serial.println(responseCode);
-    http.end();
-  
-    Serial.println("POST");
-    Serial.println(batteryUrl);
-    Serial.println(voltageOutput);
-    http.begin(batteryUrl);
-    http.addHeader("Content-Type", "application/json");
-    responseCode = http.POST(voltageOutput);
-    Serial.println(responseCode);
-    http.end();
-
+    // terminate string
+    packet[index] = '\0';
+    return true;
   }
+  
+  return false;
+}
+
+void extractValuesFromPacket(char* packet, double* values) {
+    char delimiter[] = "|";
+    char *ptr = strtok(packet, delimiter);
+    int index = 0;
+    
+    while(ptr != NULL)
+    {
+      double val = atof(ptr);
+      Serial.println(val);
+      values[index] = val;
+      ptr = strtok(NULL, delimiter);
+      index++;
+    }
+}
+
+void loop() {
+ 
+  char packet[64];
+  bool wasRead = tryReceivePacket(packet);
+  if(!wasRead)
+  {
+    return;
+  }
+  
+  double values[] = {0,0,0};
+  extractValuesFromPacket(packet, values);
+  
+  double celsius = *values;
+  double relative_humidity = *(values + 1);
+  double voltage = *(values + 2);
+
+  // Display information
+  display.clearDisplay();
+  int rssi = LoRa.packetRssi();
+  display.setCursor(0,0);
+  display.printf("C: %.2f", celsius);
+  display.setCursor(0,20);
+  display.printf("RH: %.2f", relative_humidity);
+  display.setCursor(0,30);
+  display.printf("mV: %d", voltage);
+  display.setCursor(0,40);
+  display.print("RSSI:");
+  display.setCursor(30,40);
+  display.print(rssi);
+  display.display();   
+
+  int responseCode = 0;
+  char weatherPayload[80];
+  sprintf(weatherPayload, "{\"celsius\": %.2f, \"relative_humidity\": %.2f}", celsius, relative_humidity);
+  Serial.println("POST");
+  Serial.println(weatherUrl);
+  Serial.println(weatherPayload);
+  http.begin(weatherUrl);
+  http.addHeader("Content-Type", "application/json");
+  responseCode = http.POST(weatherPayload);
+  Serial.println(responseCode);
+  http.end();
+
+  char voltagePayload[80];
+  sprintf(voltagePayload, "{\"voltage\": %.2f}", voltage);
+  Serial.println("POST");
+  Serial.println(batteryUrl);
+  Serial.println(voltagePayload);
+  http.begin(batteryUrl);
+  http.addHeader("Content-Type", "application/json");
+  responseCode = http.POST(voltagePayload);
+  Serial.println(responseCode);
+  http.end();
 }
