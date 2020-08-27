@@ -161,7 +161,7 @@ void loop() {
   display.setCursor(0,20);
   display.printf("RH: %.2f", relative_humidity);
   display.setCursor(0,30);
-  display.printf("mV: %d", voltage);
+  display.printf("mV: %.2f", voltage);
   display.setCursor(0,40);
   display.print("RSSI:");
   display.setCursor(30,40);
