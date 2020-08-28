@@ -1,7 +1,7 @@
 <template>
   <div class="container is-fullhd">
     <b-switch v-model="useImperial" size="is-small" class="has-text-light">imperial</b-switch>
-    <div class="tile is-ancestor mt-6 ml-6">
+    <div class="tile is-ancestor mt-6">
       <div class="tile is-vertical is-10">
         <div class="tile">
           <div class="tile is-parent is-vertical">
