@@ -31,6 +31,7 @@
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
+
 // API Url is in Secrets.h!
 String url = ApiUrl;
 String weatherUrl = url + "/weather";
@@ -137,6 +138,7 @@ void extractValuesFromPacket(char* packet, double* values) {
     }
 }
 
+int readsRemaining = 10;
 void loop() {
  
   char packet[64];
@@ -145,7 +147,7 @@ void loop() {
   {
     return;
   }
-  
+
   double values[] = {0,0,0};
   extractValuesFromPacket(packet, values);
   
@@ -190,4 +192,12 @@ void loop() {
   responseCode = http.POST(voltagePayload);
   Serial.println(responseCode);
   http.end();
+
+  readsRemaining--;
+  if(readsRemaining < 1)
+  {
+    Serial.println("resetting now!");
+    Serial.flush();
+    ESP.restart();
+  }
 }
