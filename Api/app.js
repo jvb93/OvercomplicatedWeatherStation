@@ -75,7 +75,7 @@ router.get("/weather", async (req, res) => {
   }
 });
 
-router.post("/weather", jsonParser, async (req, res) => {
+router.post("/weather", jsonParser, (req, res) => {
   try {
     if (req.body.relative_humidity != null && req.body.relative_humidity == 0) {
       res.sendStatus(400);
@@ -88,14 +88,14 @@ router.post("/weather", jsonParser, async (req, res) => {
     }
 
     const newWeather = new Weather(req.body);
-    await newWeather.save();
-    res.json({ weather: newWeather });
+    newWeather.save();
+    res.sendStatus(201);
   } catch (error) {
     console.error(error);
   }
 });
 
-router.get("/battery", async (req, res) => {
+router.get("/battery", (req, res) => {
   try {
     let battery = await Battery.findAll({
       limit: 1,
@@ -114,8 +114,8 @@ router.post("/battery", jsonParser, async (req, res) => {
       return;
     }
     const newBattery = new Battery(req.body);
-    await newBattery.save();
-    res.json({ battery: newBattery });
+    newBattery.save();
+    res.sendStatus(201);
   } catch (error) {
     console.error(error);
   }
