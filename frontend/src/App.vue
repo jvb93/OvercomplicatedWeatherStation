@@ -33,10 +33,17 @@ export default {
     backgroundClass() {
       let now = new Date();
       let hour = now.getHours();
-      if (hour > 20) {
-        return "nighttime";
+
+      if (hour < 5) {
+        return "night";
+      } else if (hour >= 5 && hour <= 7) {
+        return "dawn";
+      } else if (hour > 7 && hour <= 17) {
+        return "day";
+      } else if (hour > 17 && hour < 20) {
+        return "dusk";
       }
-      return "daytime";
+      return "day";
     },
     useImperial: {
       // getter
@@ -68,13 +75,53 @@ export default {
   min-height: 100vh;
 }
 
-#background.nighttime {
-  background-color: #000000;
-  background-image: linear-gradient(147deg, #000000 0%, #2c3e50 74%);
+#background.dawn {
+  background-image: linear-gradient(315deg, #fce043 0%, #fb7ba2 74%);
+  background-size: 400% 400%;
+  -webkit-animation: gradientBG 20s ease infinite;
+  animation: gradientBG 20s ease infinite;
 }
 
-#background.daytime {
-  background-color: #2a2a72;
-  background-image: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%);
+#background.dusk {
+  background-image: linear-gradient(315deg, #d4418e 0%, #0652c5 74%);
+  background-size: 400% 400%;
+  -webkit-animation: gradientBG 20s ease infinite;
+  animation: gradientBG 20s ease infinite;
+}
+
+#background.night {
+  background: linear-gradient(147deg, #000000 0%, #2c3e50 74%);
+  background-size: 400% 400%;
+  -webkit-animation: gradientBG 20s ease infinite;
+  animation: gradientBG 20s ease infinite;
+}
+
+#background.day {
+  background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%);
+  background-size: 400% 400%;
+  -webkit-animation: gradientBG 20s ease infinite;
+  animation: gradientBG 20s ease infinite;
+}
+@-webkit-keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 </style>
