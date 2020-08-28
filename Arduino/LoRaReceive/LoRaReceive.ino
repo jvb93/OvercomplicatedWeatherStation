@@ -138,8 +138,15 @@ void extractValuesFromPacket(char* packet, double* values) {
     }
 }
 
-int readsRemaining = 10;
 void loop() {
+  
+  //reboot on a 10 minute interval
+  if(millis() > 600000)
+  {
+    Serial.println("resetting now!");
+    Serial.flush();
+    ESP.restart();
+  }
  
   char packet[64];
   bool wasRead = tryReceivePacket(packet);
@@ -193,11 +200,5 @@ void loop() {
   Serial.println(responseCode);
   http.end();
 
-  readsRemaining--;
-  if(readsRemaining < 1)
-  {
-    Serial.println("resetting now!");
-    Serial.flush();
-    ESP.restart();
-  }
+ 
 }
