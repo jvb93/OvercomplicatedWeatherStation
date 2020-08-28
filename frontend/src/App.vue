@@ -1,5 +1,8 @@
 <template>
   <div class="container is-fullhd">
+    <b-switch v-model="useImperial" size="is-small" class="has-text-light">
+      imperial
+    </b-switch>
     <div class="tile is-ancestor mt-6">
       <div class="tile is-vertical is-8">
         <div class="tile">
@@ -8,34 +11,25 @@
           </div>
           <div class="tile is-parent is-vertical">
             <battery />
-            <article class="tile is-child notification is-white">
-              <p class="title">...tiles</p>
-              <p class="subtitle">Bottom tile</p>
-            </article>
+            <article class="tile is-child notification is-white"></article>
           </div>
         </div>
         <div class="tile is-parent">
-          <article class="tile is-child notification is-white">
-            <p class="title">Wide tile</p>
-            <p class="subtitle">Aligned with the right tile</p>
-            <div class="content">
-              <!-- Content -->
-            </div>
-          </article>
+          <weather-chart />
         </div>
       </div>
     </div>
-    <div class="card"></div>
     <span id="background" :class="backgroundClass"></span>
   </div>
 </template>
 
 <script>
 import CurrentConditions from "@/components/weather/CurrentConditions.vue";
+import WeatherChart from "@/components/weather/WeatherChart.vue";
 import Battery from "@/components/device/Battery.vue";
 export default {
   name: "App",
-  components: { CurrentConditions, Battery },
+  components: { CurrentConditions, Battery, WeatherChart },
   computed: {
     backgroundClass() {
       let now = new Date();
@@ -44,6 +38,22 @@ export default {
         return "nighttime";
       }
       return "daytime";
+    },
+    useImperial: {
+      // getter
+      get: function() {
+        return localStorage["useImperial"];
+      },
+      // setter
+      set: function(newValue) {
+        if (newValue) {
+          localStorage["useImperial"] = true;
+        } else {
+          localStorage["useImperial"] = false;
+        }
+
+        location.reload();
+      },
     },
   },
 };
