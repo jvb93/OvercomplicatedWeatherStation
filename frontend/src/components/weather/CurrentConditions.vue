@@ -1,16 +1,20 @@
 <template>
-  <div class="columns has-text-centered" v-if="conditions">
-    <div class="column">
-      <h1 class="title is-1 has-text-weight-light">{{ conditions.celsius }}</h1>
-      <h3 class="subtitle">Temperature</h3>
+  <article class="tile is-child notification is-white">
+    <div class="columns has-text-centered" v-if="conditions">
+      <div class="column">
+        <h1 class="title is-1 has-text-weight-light">
+          {{ conditions.celsius }}
+        </h1>
+        <h3 class="subtitle">Temperature</h3>
+      </div>
+      <div class="column">
+        <h1 class="title is-1 has-text-weight-light">
+          {{ conditions.relative_humidity }}%
+        </h1>
+        <h3 class="subtitle">Relative Humidity</h3>
+      </div>
     </div>
-    <div class="column">
-      <h1 class="title is-1 has-text-weight-light">
-        {{ conditions.relative_humidity }}%
-      </h1>
-      <h3 class="subtitle">Relative Humidity</h3>
-    </div>
-  </div>
+  </article>
 </template>
 
 <script>

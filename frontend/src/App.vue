@@ -4,26 +4,18 @@
       <div class="tile is-vertical is-8">
         <div class="tile">
           <div class="tile is-parent is-vertical">
+            <current-conditions />
+          </div>
+          <div class="tile is-parent is-vertical">
+            <battery />
             <article class="tile is-child notification is-white">
-              <current-conditions />
-            </article>
-            <article class="tile is-child notification is-warning">
               <p class="title">...tiles</p>
               <p class="subtitle">Bottom tile</p>
             </article>
           </div>
-          <div class="tile is-parent">
-            <article class="tile is-child notification is-info">
-              <p class="title">Middle tile</p>
-              <p class="subtitle">With an image</p>
-              <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/640x480.png" />
-              </figure>
-            </article>
-          </div>
         </div>
         <div class="tile is-parent">
-          <article class="tile is-child notification is-danger">
+          <article class="tile is-child notification is-white">
             <p class="title">Wide tile</p>
             <p class="subtitle">Aligned with the right tile</p>
             <div class="content">
@@ -40,9 +32,10 @@
 
 <script>
 import CurrentConditions from "@/components/weather/CurrentConditions.vue";
+import Battery from "@/components/device/Battery.vue";
 export default {
   name: "App",
-  components: { CurrentConditions },
+  components: { CurrentConditions, Battery },
   computed: {
     backgroundClass() {
       let now = new Date();
@@ -68,7 +61,7 @@ export default {
 
 #background.nighttime {
   background-color: #000000;
-  background-image: linear-gradient(147deg, #000000 0%, #434343 74%);
+  background-image: linear-gradient(147deg, #000000 0%, #2c3e50 74%);
 }
 
 #background.daytime {
