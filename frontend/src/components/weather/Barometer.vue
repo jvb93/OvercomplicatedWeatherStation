@@ -1,10 +1,10 @@
 <template>
   <article class="tile is-parent has-text-centered notification is-white" v-if="dataCollection">
-    <article class="tile is-4 is-child">
+    <article class="tile is-5 is-child">
       <h1 class="title is-1 has-text-weight-light">{{pressures[0].toFixed(2)}}</h1>
       <h3 class="subtitle">{{units}}</h3>
     </article>
-    <article class="tile is-8 is-child">
+    <article class="tile is-7 is-child">
       <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height:100px;" />
     </article>
   </article>

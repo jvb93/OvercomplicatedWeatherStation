@@ -1,6 +1,6 @@
 <template>
   <article class="tile is-child notification is-white" v-if="battery">
-    <p class="title has-text-weight-light">{{ battery.voltage }}</p>
+    <h1 class="title is-1 has-text-weight-light">{{ battery.voltage }}</h1>
     <p class="subtitle">Battery Voltage</p>
   </article>
 </template>

@@ -1,9 +1,8 @@
 <template>
-  <article class="tile is-child notification is-white">
-    <p class="title has-text-weight-light">Conditions Over Time</p>
-    <div class="content" v-if="dataCollection">
+  <article class="tile is-parent notification is-vertical is-white">
+    <article class="tile is-child" v-if="dataCollection">
       <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height: 500px;" />
-    </div>
+    </article>
   </article>
 </template>
 
