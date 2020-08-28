@@ -1,4 +1,4 @@
-#include <Adafruit_SHT31.h>
+#include <Adafruit_BME280.h>
 #include <axp20x.h>
 #include <SPI.h>
 #include <LoRa.h>
@@ -18,7 +18,7 @@
 #define TIME_TO_SLEEP  300 
 
 AXP20X_Class axp;
-Adafruit_SHT31 sht31 = Adafruit_SHT31();
+Adafruit_BME280 bme;
 
 String weatherOutput;
 String voltageOutput;
@@ -46,9 +46,9 @@ void setup()
     
 
    // init temperature sensor over i2c
-   if (!sht31.begin(0x44)) {   
-      Serial.println("Couldn't find SHT31");
-   }
+    while (!bme.begin(0x76)) {  
+      Serial.println("Could not find a valid BME280 sensor, check wiring!");
+    }
 
      //SPI LoRa pins
     SPI.begin(SCK, MISO, MOSI, SS);
@@ -68,13 +68,14 @@ void setup()
     delay(2000);
 
     // take measurements
-    float t = sht31.readTemperature();
-    float h = sht31.readHumidity(); 
+    float t = bme.readTemperature();
+    float h = bme.readHumidity();
+    float p = bme.readPressure(); 
     float v = axp.getBattVoltage();
 
     // send data
     LoRa.beginPacket();
-    LoRa.printf("%.2f|%.2f|%.2f",t ,h, v);
+    LoRa.printf("%.2f|%.2f|%.2f|%.2f",t ,h, v, p);
     LoRa.endPacket();
 
     // wait for packet send to complete and then go to sleep

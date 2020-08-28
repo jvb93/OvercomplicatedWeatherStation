@@ -155,12 +155,13 @@ void loop() {
     return;
   }
 
-  double values[] = {0,0,0};
+  double values[] = {0,0,0,0};
   extractValuesFromPacket(packet, values);
   
   double celsius = *values;
   double relative_humidity = *(values + 1);
   double voltage = *(values + 2);
+  double pressure = *(values + 3);
 
   // Display information
   display.clearDisplay();
@@ -172,14 +173,16 @@ void loop() {
   display.setCursor(0,30);
   display.printf("mV: %.2f", voltage);
   display.setCursor(0,40);
+  display.printf("Pa: %.2f", pressure);
+  display.setCursor(0,50);
   display.print("RSSI:");
-  display.setCursor(30,40);
+  display.setCursor(30,50);
   display.print(rssi);
   display.display();   
 
   int responseCode = 0;
-  char weatherPayload[80];
-  sprintf(weatherPayload, "{\"celsius\": %.2f, \"relative_humidity\": %.2f}", celsius, relative_humidity);
+  char weatherPayload[100];
+  sprintf(weatherPayload, "{\"celsius\": %.2f, \"relative_humidity\": %.2f, \"pressure\": %.2f}", celsius, relative_humidity, pressure);
   Serial.println("POST");
   Serial.println(weatherUrl);
   Serial.println(weatherPayload);

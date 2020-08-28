@@ -33,6 +33,9 @@ const Weather = pg.define("weather", {
   relative_humidity: {
     type: sequelize.FLOAT,
   },
+  pressure: {
+    type: sequelize.FLOAT,
+  },
 });
 
 const Battery = pg.define("battery", {
@@ -74,14 +77,16 @@ router.get("/weather", async (req, res) => {
 
 router.post("/weather", jsonParser, async (req, res) => {
   try {
-    if (req.body.celsius != null && req.body.celsius == 0) {
-      res.sendStatus(400);
-      return;
-    }
     if (req.body.relative_humidity != null && req.body.relative_humidity == 0) {
       res.sendStatus(400);
       return;
     }
+
+    if (req.body.pressure != null && req.body.pressure == 0) {
+      res.sendStatus(400);
+      return;
+    }
+
     const newWeather = new Weather(req.body);
     await newWeather.save();
     res.json({ weather: newWeather });
