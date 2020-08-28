@@ -2,11 +2,7 @@
   <article class="tile is-child notification is-white">
     <p class="title has-text-weight-light">Conditions Over Time</p>
     <div class="content" v-if="dataCollection">
-      <line-chart
-        :chart-data="dataCollection"
-        :options="chartOptions"
-        style="max-height: 500px;"
-      />
+      <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height: 500px;" />
     </div>
   </article>
 </template>
@@ -14,7 +10,7 @@
 <script>
 import LineChart from "@/components/charts/lineChart.js";
 import axios from "axios";
-import cToF from "@/helpers/UnitConverter.js";
+import cToF from "@/helpers/TemperatureConverter.js";
 import dayjs from "dayjs";
 export default {
   components: {
@@ -26,6 +22,19 @@ export default {
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
+        tooltips: {
+          callbacks: {
+            label: function (tooltipItem, data) {
+              var label = data.datasets[tooltipItem.datasetIndex].label || "";
+
+              if (label) {
+                label += ": ";
+              }
+              label += tooltipItem.yLabel.toFixed(2);
+              return label;
+            },
+          },
+        },
       },
     };
   },

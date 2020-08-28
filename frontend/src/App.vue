@@ -1,17 +1,15 @@
 <template>
   <div class="container is-fullhd">
-    <b-switch v-model="useImperial" size="is-small" class="has-text-light">
-      imperial
-    </b-switch>
+    <b-switch v-model="useImperial" size="is-small" class="has-text-light">imperial</b-switch>
     <div class="tile is-ancestor mt-6">
-      <div class="tile is-vertical is-8">
+      <div class="tile is-vertical is-10">
         <div class="tile">
           <div class="tile is-parent is-vertical">
             <current-conditions />
           </div>
           <div class="tile is-parent is-vertical">
             <battery />
-            <article class="tile is-child notification is-white"></article>
+            <barometer />
           </div>
         </div>
         <div class="tile is-parent">
@@ -27,9 +25,10 @@
 import CurrentConditions from "@/components/weather/CurrentConditions.vue";
 import WeatherChart from "@/components/weather/WeatherChart.vue";
 import Battery from "@/components/device/Battery.vue";
+import Barometer from "@/components/weather/Barometer.vue";
 export default {
   name: "App",
-  components: { CurrentConditions, Battery, WeatherChart },
+  components: { CurrentConditions, Battery, WeatherChart, Barometer },
   computed: {
     backgroundClass() {
       let now = new Date();
@@ -41,11 +40,11 @@ export default {
     },
     useImperial: {
       // getter
-      get: function() {
+      get: function () {
         return localStorage["useImperial"];
       },
       // setter
-      set: function(newValue) {
+      set: function (newValue) {
         if (newValue) {
           localStorage["useImperial"] = true;
         } else {
