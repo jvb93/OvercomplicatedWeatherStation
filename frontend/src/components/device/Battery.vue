@@ -1,5 +1,8 @@
 <template>
-  <article class="tile is-parent has-text-centered notification is-white" v-if="battery">
+  <article
+    class="tile is-parent has-text-centered notification is-white drop-shadow"
+    v-if="battery"
+  >
     <article class="tile is-5 is-child">
       <h1 class="title is-1 has-text-weight-light">{{ battery[battery.length-1]}}</h1>
       <p class="subtitle">Battery Voltage</p>

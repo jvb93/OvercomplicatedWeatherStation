@@ -1,5 +1,8 @@
 <template>
-  <article class="tile is-parent has-text-centered notification is-white" v-if="dataCollection">
+  <article
+    class="tile is-parent has-text-centered notification is-white drop-shadow"
+    v-if="dataCollection"
+  >
     <article class="tile is-5 is-child">
       <h1 class="title is-1 has-text-weight-light">{{pressures[pressures.length-1]}}</h1>
       <h3 class="subtitle">{{units}}</h3>

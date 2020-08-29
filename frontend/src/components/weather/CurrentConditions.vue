@@ -1,5 +1,5 @@
 <template>
-  <article class="tile is-parent notification is-vertical is-white">
+  <article class="tile is-parent notification is-vertical is-white drop-shadow">
     <article class="tile is-parent has-text-centered" v-if="conditions">
       <article class="tile is-child">
         <h1

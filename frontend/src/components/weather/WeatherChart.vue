@@ -1,5 +1,5 @@
 <template>
-  <article class="tile is-parent notification is-vertical is-white">
+  <article class="tile is-parent notification is-vertical is-white drop-shadow">
     <article class="tile is-child" v-if="dataCollection">
       <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height: 500px;" />
     </article>
