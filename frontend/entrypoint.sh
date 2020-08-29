@@ -1,8 +1,4 @@
 #!/bin/bash
-
-echo "Starting Nginx"
-nginx -g 'daemon off;'
-
 echo "Starting substitution"
 for file in /usr/share/nginx/html/js/app.*.js;
 do
@@ -12,3 +8,5 @@ do
   fi
   envsubst '$VUE_APP_API_URL' < $file.tmpl.js > $file
 done
+echo "Starting Nginx"
+nginx -g 'daemon off;'

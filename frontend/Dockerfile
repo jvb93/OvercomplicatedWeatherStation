@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # production stage
-FROM nginx:stable-alpine as production-stage
+FROM nginx:1.11 as production-stage
 ENV VUE_APP_API_URL=http://localhost
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY --from=build-stage /app/entrypoint.sh /
