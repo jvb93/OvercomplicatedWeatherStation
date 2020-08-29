@@ -1,7 +1,11 @@
 <template>
   <article class="tile is-parent notification is-vertical is-white drop-shadow">
     <article class="tile is-child" v-if="dataCollection">
-      <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height: 500px;" />
+      <line-chart
+        :chart-data="dataCollection"
+        :options="chartOptions"
+        style="max-height: 500px;"
+      />
     </article>
   </article>
 </template>
@@ -11,6 +15,8 @@ import LineChart from "@/components/charts/lineChart.js";
 import axios from "axios";
 import cToF from "@/helpers/TemperatureConverter.js";
 import dayjs from "dayjs";
+import config from "@/helpers/ConfigProvider.js";
+
 export default {
   components: {
     LineChart,
@@ -23,7 +29,7 @@ export default {
         maintainAspectRatio: false,
         tooltips: {
           callbacks: {
-            label: function (tooltipItem, data) {
+            label: function(tooltipItem, data) {
               var label = data.datasets[tooltipItem.datasetIndex].label || "";
 
               if (label) {
@@ -42,7 +48,8 @@ export default {
   },
   methods: {
     async getData() {
-      let fetched = await axios.get(`${process.env.VUE_APP_API_URL}/weather`);
+      let host = config.value("backendHost");
+      let fetched = await axios.get(`${host}/weather`);
       var chartData = fetched.data.reverse();
 
       let labels = [];

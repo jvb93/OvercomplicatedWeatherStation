@@ -10,5 +10,8 @@ RUN npm run build
 FROM nginx:stable-alpine as production-stage
 ENV VUE_APP_API_URL=http://localhost
 COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY --from=build-stage /app/entrypoint.sh /
+
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]

@@ -2,18 +2,22 @@
   <article class="tile is-parent notification is-vertical is-white drop-shadow">
     <article class="tile is-parent has-text-centered" v-if="conditions">
       <article class="tile is-child">
-        <h1
-          class="title is-1 has-text-weight-light"
-        >{{ Math.round(conditions.celsius) }} {{ units }}</h1>
+        <h1 class="title is-1 has-text-weight-light">
+          {{ Math.round(conditions.celsius) }} {{ units }}
+        </h1>
         <h3 class="subtitle">Temperature</h3>
       </article>
       <article class="tile is-child">
-        <h1 class="title is-1 has-text-weight-light">{{ Math.round(conditions.relative_humidity) }}%</h1>
+        <h1 class="title is-1 has-text-weight-light">
+          {{ Math.round(conditions.relative_humidity) }}%
+        </h1>
         <h3 class="subtitle">Relative Humidity</h3>
       </article>
     </article>
     <article class="tile is-child bottom-text" v-if="conditions">
-      <p class="is-size-7">Last Update: {{ formatDateTime(conditions.createdAt) }}</p>
+      <p class="is-size-7">
+        Last Update: {{ formatDateTime(conditions.createdAt) }}
+      </p>
     </article>
   </article>
 </template>
@@ -22,6 +26,7 @@
 import axios from "axios";
 import cToF from "@/helpers/TemperatureConverter.js";
 import dayjs from "dayjs";
+import config from "@/helpers/ConfigProvider.js";
 
 export default {
   data() {
@@ -36,7 +41,8 @@ export default {
   },
   methods: {
     async getData() {
-      let fetched = await axios.get(`${process.env.VUE_APP_API_URL}/weather`);
+      let host = config.value("backendHost");
+      let fetched = await axios.get(`${host}/weather`);
       this.conditions = this.convertImperialIfSpecified(fetched.data[0]);
     },
     convertImperialIfSpecified(conditions) {

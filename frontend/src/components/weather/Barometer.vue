@@ -4,11 +4,17 @@
     v-if="dataCollection"
   >
     <article class="tile is-5 is-child">
-      <h1 class="title is-1 has-text-weight-light">{{pressures[pressures.length-1]}}</h1>
-      <h3 class="subtitle">{{units}}</h3>
+      <h1 class="title is-1 has-text-weight-light">
+        {{ pressures[pressures.length - 1] }}
+      </h1>
+      <h3 class="subtitle">{{ units }}</h3>
     </article>
     <article class="tile is-7 is-child">
-      <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height:100px;" />
+      <line-chart
+        :chart-data="dataCollection"
+        :options="chartOptions"
+        style="max-height:100px;"
+      />
     </article>
   </article>
 </template>
@@ -18,6 +24,8 @@ import LineChart from "@/components/charts/lineChart.js";
 import axios from "axios";
 import paToInHg from "@/helpers/PressureConverter.js";
 import dayjs from "dayjs";
+import config from "@/helpers/ConfigProvider.js";
+
 export default {
   components: {
     LineChart,
@@ -39,7 +47,7 @@ export default {
         },
         tooltips: {
           callbacks: {
-            label: function (tooltipItem, data) {
+            label: function(tooltipItem, data) {
               var label = data.datasets[tooltipItem.datasetIndex].label || "";
 
               if (label) {
@@ -80,7 +88,8 @@ export default {
   },
   methods: {
     async getData() {
-      let fetched = await axios.get(`${process.env.VUE_APP_API_URL}/weather`);
+      let host = config.value("backendHost");
+      let fetched = await axios.get(`${host}/weather`);
       var chartData = fetched.data.reverse();
       let labels = [];
       let p = [];
@@ -115,5 +124,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

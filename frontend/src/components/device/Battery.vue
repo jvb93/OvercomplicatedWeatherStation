@@ -4,11 +4,17 @@
     v-if="battery"
   >
     <article class="tile is-5 is-child">
-      <h1 class="title is-1 has-text-weight-light">{{ battery[battery.length-1]}}</h1>
+      <h1 class="title is-1 has-text-weight-light">
+        {{ battery[battery.length - 1] }}
+      </h1>
       <p class="subtitle">Battery Voltage</p>
     </article>
     <article class="tile is-7 is-child">
-      <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height:100px;" />
+      <line-chart
+        :chart-data="dataCollection"
+        :options="chartOptions"
+        style="max-height:100px;"
+      />
     </article>
   </article>
 </template>
@@ -17,7 +23,7 @@
 import axios from "axios";
 import dayjs from "dayjs";
 import LineChart from "@/components/charts/lineChart.js";
-
+import config from "@/helpers/ConfigProvider.js";
 export default {
   components: {
     LineChart,
@@ -34,7 +40,7 @@ export default {
         },
         tooltips: {
           callbacks: {
-            label: function (tooltipItem, data) {
+            label: function(tooltipItem, data) {
               var label = data.datasets[tooltipItem.datasetIndex].label || "";
 
               if (label) {
@@ -73,9 +79,8 @@ export default {
 
   methods: {
     async getData() {
-      let fetched = await axios.get(
-        `${process.env.VUE_APP_API_URL}/battery?limit=100`
-      );
+      let host = config.value("backendHost");
+      let fetched = await axios.get(`${host}/battery?limit=100`);
       var chartData = fetched.data.reverse();
       let labels = [];
       let p = [];
