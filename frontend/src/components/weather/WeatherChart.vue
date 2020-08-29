@@ -41,44 +41,43 @@ export default {
     this.getData();
   },
   methods: {
-    getData() {
-      axios.get(`${process.env.VUE_APP_API_URL}/weather`).then((resp) => {
-        var chartData = resp.data.reverse();
+    async getData() {
+      let fetched = await axios.get(`${process.env.VUE_APP_API_URL}/weather`);
+      var chartData = fetched.data.reverse();
 
-        let labels = [];
-        let temperatures = [];
-        let humidity = [];
-        let useImperial = localStorage["useImperial"];
+      let labels = [];
+      let temperatures = [];
+      let humidity = [];
+      let useImperial = localStorage["useImperial"];
 
-        for (const data of chartData) {
-          labels.push(dayjs(data.createdAt).format("h:mm:ss A"));
-          if (useImperial == "true") {
-            temperatures.push(cToF(data.celsius));
-          } else {
-            temperatures.push(data.celsius);
-          }
-          humidity.push(data.relative_humidity);
+      for (const data of chartData) {
+        labels.push(dayjs(data.createdAt).format("h:mm:ss A"));
+        if (useImperial == "true") {
+          temperatures.push(cToF(data.celsius));
+        } else {
+          temperatures.push(data.celsius);
         }
-        this.dataCollection = {
-          labels: labels,
-          datasets: [
-            {
-              label: "Temperature",
-              backgroundColor: "#F38630",
-              borderColor: "#F38630",
-              data: temperatures,
-              fill: false,
-            },
-            {
-              label: "Humidity",
-              backgroundColor: "#A7DBD8",
-              borderColor: "#A7DBD8",
-              data: humidity,
-              fill: false,
-            },
-          ],
-        };
-      });
+        humidity.push(data.relative_humidity);
+      }
+      this.dataCollection = {
+        labels: labels,
+        datasets: [
+          {
+            label: "Temperature",
+            backgroundColor: "#F38630",
+            borderColor: "#F38630",
+            data: temperatures,
+            fill: false,
+          },
+          {
+            label: "Humidity",
+            backgroundColor: "#A7DBD8",
+            borderColor: "#A7DBD8",
+            data: humidity,
+            fill: false,
+          },
+        ],
+      };
     },
   },
 };

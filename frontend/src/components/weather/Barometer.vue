@@ -79,38 +79,37 @@ export default {
     this.getData();
   },
   methods: {
-    getData() {
-      axios.get(`${process.env.VUE_APP_API_URL}/weather`).then((resp) => {
-        var chartData = resp.data.reverse();
-        let labels = [];
-        let p = [];
-        let useImperial = localStorage["useImperial"];
+    async getData() {
+      let fetched = await axios.get(`${process.env.VUE_APP_API_URL}/weather`);
+      var chartData = fetched.data.reverse();
+      let labels = [];
+      let p = [];
+      let useImperial = localStorage["useImperial"];
 
-        for (const data of chartData) {
-          if (data.pressure == null) {
-            continue;
-          }
-          labels.push(dayjs(data.createdAt).format("h:mm:ss A"));
-          if (useImperial == "true") {
-            p.push(+paToInHg(data.pressure).toFixed(2));
-          } else {
-            p.push(+(data.pressure / 100).toFixed(2));
-          }
+      for (const data of chartData) {
+        if (data.pressure == null) {
+          continue;
         }
-        this.pressures = p;
-        this.dataCollection = {
-          labels: labels,
-          datasets: [
-            {
-              label: "Barometric Pressure",
-              backgroundColor: "#556270",
-              borderColor: "#556270",
-              data: p,
-              fill: false,
-            },
-          ],
-        };
-      });
+        labels.push(dayjs(data.createdAt).format("h:mm:ss A"));
+        if (useImperial == "true") {
+          p.push(+paToInHg(data.pressure).toFixed(2));
+        } else {
+          p.push(+(data.pressure / 100).toFixed(2));
+        }
+      }
+      this.pressures = p;
+      this.dataCollection = {
+        labels: labels,
+        datasets: [
+          {
+            label: "Barometric Pressure",
+            backgroundColor: "#556270",
+            borderColor: "#556270",
+            data: p,
+            fill: false,
+          },
+        ],
+      };
     },
   },
 };
