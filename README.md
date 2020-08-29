@@ -1,5 +1,7 @@
 # Overcomplicated Weather Station
 
+![CI](https://github.com/jvb93/OvercomplicatedWeatherStation/workflows/CI/badge.svg)
+
 ## What is it?
 
 This is an overly-complicated solution to a problem that doesn't really exist - the need to know the weather on a minute-by-minute basis.
