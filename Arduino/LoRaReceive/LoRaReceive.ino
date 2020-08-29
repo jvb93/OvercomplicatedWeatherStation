@@ -31,34 +31,17 @@
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
-
 // API Url is in Secrets.h!
 String url = ApiUrl;
 String weatherUrl = url + "/weather";
 String batteryUrl = url + "/battery";
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
-
 HTTPClient http;
-void connectWiFi(){
-  // Connect to Wi-Fi network with SSID and password
-  Serial.print("Connecting to ");
-  
-  // WiFiSSD and WiFiPass are in Secrets.h!
-  Serial.println(WiFiSSID);
-  WiFi.begin(WiFiSSID, WiFiPass);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  
-  // Print local IP address
-  Serial.println("");
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-}
 
+bool packetReady = false;
+double values[] = {0,0,0,0};
+int rssi = 0;
 
 void setup() { 
   
@@ -102,25 +85,63 @@ void setup() {
   display.display();  
 
   connectWiFi();
+  
+  LoRa.onReceive(onReceivePacket);
+
+  // put the radio into receive mode
+  LoRa.receive();
 }
 
-bool tryReceivePacket(char* packet) {
-  int packetSize = LoRa.parsePacket();
-  if (packetSize) {
-    //received a packet
-    //read packet
-
-    int index = 0;
-    while (LoRa.available()) {
-      packet[index] = (char)LoRa.read();
-      index++;
-    }
-    // terminate string
-    packet[index] = '\0';
-    return true;
-  }
+void loop() {
   
-  return false;
+  if(packetReady)
+  {
+    double celsius = *values;
+    double relative_humidity = *(values + 1);
+    double voltage = *(values + 2);
+    double pressure = *(values + 3);
+    
+    displayInformation(rssi, celsius, relative_humidity, voltage, pressure);
+    sendHttp(celsius, relative_humidity, voltage, pressure);
+    resetValues();
+   
+  }
+ 
+  //reboot on a 10 minute interval
+  if(millis() > 600000)
+  {
+    Serial.println("resetting now!");
+    Serial.flush();
+    ESP.restart();
+  }
+}
+
+void resetValues(){
+  packetReady = false;
+  for(int x = 0; x < 4; x++)
+  {
+    values[x] = 0;
+  }
+}
+
+void onReceivePacket(int packetSize)
+{
+  char packet[64];
+  receivePacket(packet, packetSize);
+  extractValuesFromPacket(packet, values);
+  packetReady = true;
+}
+
+
+void receivePacket(char* packet, int packetSize) {
+  rssi = LoRa.packetRssi();
+  int index = 0;
+  for (int i = 0; i < packetSize; i++) {
+     packet[i] = (char)LoRa.read();
+     index++;
+  }
+  // terminate string
+  packet[index] = '\0';
 }
 
 void extractValuesFromPacket(char* packet, double* values) {
@@ -138,34 +159,33 @@ void extractValuesFromPacket(char* packet, double* values) {
     }
 }
 
-void loop() {
-  
-  //reboot on a 10 minute interval
-  if(millis() > 600000)
-  {
-    Serial.println("resetting now!");
-    Serial.flush();
-    ESP.restart();
-  }
- 
-  char packet[64];
-  bool wasRead = tryReceivePacket(packet);
-  if(!wasRead)
-  {
-    return;
-  }
 
-  double values[] = {0,0,0,0};
-  extractValuesFromPacket(packet, values);
+void connectWiFi(){
+  // Connect to Wi-Fi network with SSID and password
+  Serial.print("Connecting to ");
   
-  double celsius = *values;
-  double relative_humidity = *(values + 1);
-  double voltage = *(values + 2);
-  double pressure = *(values + 3);
+  // WiFiSSD and WiFiPass are in Secrets.h!
+  Serial.println(WiFiSSID);
+  WiFi.begin(WiFiSSID, WiFiPass);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  // Print local IP address
+  Serial.println("");
+  Serial.println("WiFi connected.");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
 
+
+
+
+void displayInformation(int rssi, double celsius, double relative_humidity, double voltage, double pressure){
   // Display information
   display.clearDisplay();
-  int rssi = LoRa.packetRssi();
+  
   display.setCursor(0,0);
   display.printf("C: %.2f", celsius);
   display.setCursor(0,20);
@@ -179,7 +199,10 @@ void loop() {
   display.setCursor(30,50);
   display.print(rssi);
   display.display();   
+}
 
+
+void sendHttp(double celsius, double relative_humidity, double voltage, double pressure){
   int responseCode = 0;
   char weatherPayload[100];
   sprintf(weatherPayload, "{\"celsius\": %.2f, \"relative_humidity\": %.2f, \"pressure\": %.2f}", celsius, relative_humidity, pressure);
@@ -202,6 +225,4 @@ void loop() {
   responseCode = http.POST(voltagePayload);
   Serial.println(responseCode);
   http.end();
-
- 
 }
