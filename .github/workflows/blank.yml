@@ -28,3 +28,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: jvb1993/weather-frontend     
           path: frontend
+          dockerfile: frontend/Dockerfile
