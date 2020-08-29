@@ -65,8 +65,12 @@ router.use(function (req, res, next) {
 
 router.get("/weather", async (req, res) => {
   try {
+    let lim = req.query.limit;
+    if (lim == null) {
+      lim = 100;
+    }
     let weather = await Weather.findAll({
-      limit: 100,
+      limit: lim,
       order: [["createdAt", "DESC"]],
     });
     res.json(weather);
@@ -97,8 +101,12 @@ router.post("/weather", jsonParser, (req, res) => {
 
 router.get("/battery", async (req, res) => {
   try {
+    let lim = req.query.limit;
+    if (lim == null) {
+      lim = 1;
+    }
     let battery = await Battery.findAll({
-      limit: 1,
+      limit: lim,
       order: [["createdAt", "DESC"]],
     });
     res.json(battery);

@@ -1,7 +1,7 @@
 <template>
   <article class="tile is-parent has-text-centered notification is-white" v-if="dataCollection">
     <article class="tile is-5 is-child">
-      <h1 class="title is-1 has-text-weight-light">{{pressures[0].toFixed(2)}}</h1>
+      <h1 class="title is-1 has-text-weight-light">{{pressures[pressures.length-1]}}</h1>
       <h3 class="subtitle">{{units}}</h3>
     </article>
     <article class="tile is-7 is-child">
@@ -89,9 +89,9 @@ export default {
           }
           labels.push(dayjs(data.createdAt).format("h:mm:ss A"));
           if (useImperial == "true") {
-            p.push(paToInHg(data.pressure));
+            p.push(+paToInHg(data.pressure).toFixed(2));
           } else {
-            p.push(data.pressure / 100);
+            p.push(+(data.pressure / 100).toFixed(2));
           }
         }
         this.pressures = p;
