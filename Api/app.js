@@ -95,7 +95,7 @@ router.post("/weather", jsonParser, (req, res) => {
   }
 });
 
-router.get("/battery", (req, res) => {
+router.get("/battery", async (req, res) => {
   try {
     let battery = await Battery.findAll({
       limit: 1,
