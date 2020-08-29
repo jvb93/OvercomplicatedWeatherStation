@@ -22,10 +22,10 @@
 <script>
 import LineChart from "@/components/charts/lineChart.js";
 import axios from "axios";
-import paToInHg from "@/helpers/PressureConverter.js";
+import hPaToInHg from "@/helpers/PressureConverter.js";
 import dayjs from "dayjs";
 import config from "@/helpers/ConfigProvider.js";
-
+import sealevelCompensator from "@/helpers/SealevelCompensator.js";
 export default {
   components: {
     LineChart,
@@ -89,7 +89,7 @@ export default {
   methods: {
     async getData() {
       let host = config.value("backendHost");
-      let fetched = await axios.get(`${host}/weather`);
+      let fetched = await axios.get(`${host}/weather?limit=288`);
       var chartData = fetched.data.reverse();
       let labels = [];
       let p = [];
@@ -99,11 +99,18 @@ export default {
         if (data.pressure == null) {
           continue;
         }
+
+        let compensatedPressure = sealevelCompensator(
+          data.pressure,
+          219,
+          data.celsius
+        );
+
         labels.push(dayjs(data.createdAt).format("h:mm:ss A"));
         if (useImperial == "true") {
-          p.push(+paToInHg(data.pressure).toFixed(2));
+          p.push(+hPaToInHg(compensatedPressure).toFixed(2));
         } else {
-          p.push(+(data.pressure / 100).toFixed(2));
+          p.push(+compensatedPressure.toFixed(2));
         }
       }
       this.pressures = p;

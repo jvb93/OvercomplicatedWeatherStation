@@ -1,4 +1,3 @@
-export default function paToInHg(pa) {
-  let kPa = pa / 1000;
-  return kPa / 3.3863886667;
+export default function hPaToInHg(hPa) {
+  return hPa * 0.02952998751;
 }

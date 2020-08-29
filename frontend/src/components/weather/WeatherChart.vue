@@ -49,7 +49,7 @@ export default {
   methods: {
     async getData() {
       let host = config.value("backendHost");
-      let fetched = await axios.get(`${host}/weather`);
+      let fetched = await axios.get(`${host}/weather?limit=288`);
       var chartData = fetched.data.reverse();
 
       let labels = [];
