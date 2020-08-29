@@ -1,3 +1,4 @@
+#!/bin/bash
 for file in /usr/share/nginx/html/js/app.*.js;
 do
   if [ ! -f $file.tmpl.js ]; then
