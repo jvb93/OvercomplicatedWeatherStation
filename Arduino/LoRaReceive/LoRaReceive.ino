@@ -38,6 +38,11 @@ String batteryUrl = url + "/battery";
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
 HTTPClient http;
+
+bool packetReady = false;
+double values[] = {0,0,0,0};
+int rssi = 0;
+
 void setup() { 
   
   //reset OLED display via software
@@ -88,6 +93,20 @@ void setup() {
 }
 
 void loop() {
+  
+  if(packetReady)
+  {
+    double celsius = *values;
+    double relative_humidity = *(values + 1);
+    double voltage = *(values + 2);
+    double pressure = *(values + 3);
+    
+    displayInformation(rssi, celsius, relative_humidity, voltage, pressure);
+    sendHttp(celsius, relative_humidity, voltage, pressure);
+    resetValues();
+   
+  }
+ 
   //reboot on a 10 minute interval
   if(millis() > 600000)
   {
@@ -96,6 +115,50 @@ void loop() {
     ESP.restart();
   }
 }
+
+void resetValues(){
+  packetReady = false;
+  for(int x = 0; x < 4; x++)
+  {
+    values[x] = 0;
+  }
+}
+
+void onReceivePacket(int packetSize)
+{
+  char packet[64];
+  receivePacket(packet, packetSize);
+  extractValuesFromPacket(packet, values);
+  packetReady = true;
+}
+
+
+void receivePacket(char* packet, int packetSize) {
+  rssi = LoRa.packetRssi();
+  int index = 0;
+  for (int i = 0; i < packetSize; i++) {
+     packet[i] = (char)LoRa.read();
+     index++;
+  }
+  // terminate string
+  packet[index] = '\0';
+}
+
+void extractValuesFromPacket(char* packet, double* values) {
+    char delimiter[] = "|";
+    char *ptr = strtok(packet, delimiter);
+    int index = 0;
+    
+    while(ptr != NULL)
+    {
+      double val = atof(ptr);
+      Serial.println(val);
+      values[index] = val;
+      ptr = strtok(NULL, delimiter);
+      index++;
+    }
+}
+
 
 void connectWiFi(){
   // Connect to Wi-Fi network with SSID and password
@@ -116,51 +179,8 @@ void connectWiFi(){
   Serial.println(WiFi.localIP());
 }
 
-void onReceivePacket(int packetSize)
-{
-  char packet[64];
-  tryReceivePacket(packet, packetSize);
-  
-  double values[] = {0,0,0,0};
-  extractValuesFromPacket(packet, values);
-  
-  double celsius = *values;
-  double relative_humidity = *(values + 1);
-  double voltage = *(values + 2);
-  double pressure = *(values + 3);
-  int rssi = LoRa.packetRssi();
-  
-  displayInformation(rssi, celsius, relative_humidity, voltage, pressure);
-  
-  sendHttp(celsius, relative_humidity, voltage, pressure);
-}
 
-bool tryReceivePacket(char* packet, int packetSize) {
-  int index = 0;
-  for (int i = 0; i < packetSize; i++) {
-     packet[i] = (char)LoRa.read();
-     index++;
-  }
-  // terminate string
-  packet[index] = '\0';
-  return true;
- 
-}
 
-void extractValuesFromPacket(char* packet, double* values) {
-    char delimiter[] = "|";
-    char *ptr = strtok(packet, delimiter);
-    int index = 0;
-    
-    while(ptr != NULL)
-    {
-      double val = atof(ptr);
-      Serial.println(val);
-      values[index] = val;
-      ptr = strtok(NULL, delimiter);
-      index++;
-    }
-}
 
 void displayInformation(int rssi, double celsius, double relative_humidity, double voltage, double pressure){
   // Display information
