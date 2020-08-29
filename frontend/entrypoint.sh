@@ -10,5 +10,5 @@ do
   if [ ! -f $file.tmpl.js ]; then
     cp $file $file.tmpl.js
   fi
-  envsubst '$VUE_APP_BASE_URL' < $file.tmpl.js > $file
+  envsubst '$VUE_APP_API_URL' < $file.tmpl.js > $file
 done
