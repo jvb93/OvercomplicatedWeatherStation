@@ -34,16 +34,14 @@ export default {
       let now = new Date();
       let hour = now.getHours();
 
-      if (hour < 5) {
-        return "night";
-      } else if (hour >= 5 && hour <= 7) {
+      if (hour >= 5 && hour <= 7) {
         return "dawn";
-      } else if (hour > 7 && hour <= 17) {
+      } else if (hour >= 8 && hour <= 17) {
         return "day";
-      } else if (hour > 17 && hour < 20) {
+      } else if (hour >= 18 && hour < 20) {
         return "dusk";
       }
-      return "day";
+      return "night";
     },
     useImperial: {
       // getter
