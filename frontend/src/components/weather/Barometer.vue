@@ -24,7 +24,7 @@ export default {
   },
   computed: {
     units() {
-      return localStorage["useImperial"] == "true" ? "mmHg" : "mb";
+      return localStorage["useImperial"] == "true" ? "inHg" : "mb";
     },
   },
   data() {
