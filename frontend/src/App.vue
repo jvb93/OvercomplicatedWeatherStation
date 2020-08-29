@@ -1,6 +1,5 @@
 <template>
   <div class="container is-fullhd">
-    <b-switch v-model="useImperial" size="is-small" class="has-text-light">imperial</b-switch>
     <div class="tile is-ancestor mt-6">
       <div class="tile is-vertical is-10">
         <div class="tile">
@@ -15,6 +14,9 @@
         <div class="tile is-parent is-vertical">
           <weather-chart />
         </div>
+        <div class="tile is-parent is-vertical">
+          <app-footer />
+        </div>
       </div>
     </div>
     <span id="background" :class="backgroundClass"></span>
@@ -26,9 +28,16 @@ import CurrentConditions from "@/components/weather/CurrentConditions.vue";
 import WeatherChart from "@/components/weather/WeatherChart.vue";
 import Battery from "@/components/device/Battery.vue";
 import Barometer from "@/components/weather/Barometer.vue";
+import AppFooter from "@/components/AppFooter.vue";
 export default {
   name: "App",
-  components: { CurrentConditions, Battery, WeatherChart, Barometer },
+  components: {
+    CurrentConditions,
+    Battery,
+    WeatherChart,
+    Barometer,
+    AppFooter,
+  },
   computed: {
     backgroundClass() {
       let now = new Date();
@@ -42,22 +51,6 @@ export default {
         return "dusk";
       }
       return "night";
-    },
-    useImperial: {
-      // getter
-      get: function () {
-        return localStorage["useImperial"];
-      },
-      // setter
-      set: function (newValue) {
-        if (newValue) {
-          localStorage["useImperial"] = true;
-        } else {
-          localStorage["useImperial"] = false;
-        }
-
-        location.reload();
-      },
     },
   },
 };
@@ -126,5 +119,10 @@ export default {
   100% {
     background-position: 0% 50%;
   }
+}
+
+.fixed-footer {
+  position: fixed;
+  bottom: 0px;
 }
 </style>
