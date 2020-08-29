@@ -27,4 +27,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: jvb1993/weather-frontend     
-          path: ./frontend
+          path: /frontend
