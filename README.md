@@ -2,13 +2,21 @@
 
 ![CI](https://github.com/jvb93/OvercomplicatedWeatherStation/workflows/CI/badge.svg)
 
+[See it in action](http://jvbuntu2.asuscomm.com:8080/)
+
 ## What is it?
 
 This is an overly-complicated solution to a problem that doesn't really exist - the need to know the weather on a minute-by-minute basis.
 
 Actually, it's an attempt to learn some interesting IoT concepts and gather a LOT of data for my data science experiments. I built a system of devices which collects ambient weather data and stores for future use.
 
+Please see the individual subfolders in this repository for detailed information on each component
+
 ## What's involved?
+
+### Diagram
+
+!['diagram'](/images/diagram.png)
 
 ### The Sender
 
@@ -36,6 +44,6 @@ Again, this is a TTGO ESP32-based MCU, but it doesn't have as many cool features
 
 The API is an Express server on top of Node.js. This runs on a Docker host on my LAN. It is the broker between the bridge (and other clients) and my Postgres database, also running in a container.
 
-## WIP
+### The Frontend
 
-this document and the rest of the code is still WIP, more coming soon.
+he Frontend is written in Vue.js using Chart.js for data visualization and Bulma for css
