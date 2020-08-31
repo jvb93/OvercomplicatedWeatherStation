@@ -167,9 +167,15 @@ void connectWiFi(){
   // WiFiSSD and WiFiPass are in Secrets.h!
   Serial.println(WiFiSSID);
   WiFi.begin(WiFiSSID, WiFiPass);
+  int retries = 20;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    retries--;
+    if(retries < 1){
+      Serial.flush();
+      ESP.restart();
+    }
   }
   
   // Print local IP address
