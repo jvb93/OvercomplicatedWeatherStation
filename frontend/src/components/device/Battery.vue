@@ -4,17 +4,11 @@
     v-if="battery"
   >
     <article class="tile is-5 is-child">
-      <h1 class="title is-1 has-text-weight-light">
-        {{ battery[battery.length - 1] }}
-      </h1>
+      <h1 class="title is-1 has-text-weight-light">{{ battery[battery.length - 1] }}</h1>
       <p class="subtitle">Battery Voltage</p>
     </article>
     <article class="tile is-7 is-child">
-      <line-chart
-        :chart-data="dataCollection"
-        :options="chartOptions"
-        style="max-height:100px;"
-      />
+      <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height:100px;" />
     </article>
   </article>
 </template>
@@ -40,7 +34,7 @@ export default {
         },
         tooltips: {
           callbacks: {
-            label: function(tooltipItem, data) {
+            label: function (tooltipItem, data) {
               var label = data.datasets[tooltipItem.datasetIndex].label || "";
 
               if (label) {
@@ -80,7 +74,7 @@ export default {
   methods: {
     async getData() {
       let host = config.value("backendHost");
-      let fetched = await axios.get(`${host}/battery?limit=100`);
+      let fetched = await axios.get(`${host}/battery?limit=288`);
       var chartData = fetched.data.reverse();
       let labels = [];
       let p = [];
@@ -99,6 +93,7 @@ export default {
             borderColor: "#556270",
             data: p,
             fill: false,
+            pointRadius: 1,
           },
         ],
       };

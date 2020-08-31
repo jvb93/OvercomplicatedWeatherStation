@@ -4,17 +4,11 @@
     v-if="dataCollection"
   >
     <article class="tile is-5 is-child">
-      <h1 class="title is-1 has-text-weight-light">
-        {{ pressures[pressures.length - 1] }}
-      </h1>
+      <h1 class="title is-1 has-text-weight-light">{{ pressures[pressures.length - 1] }}</h1>
       <h3 class="subtitle">{{ units }}</h3>
     </article>
     <article class="tile is-7 is-child">
-      <line-chart
-        :chart-data="dataCollection"
-        :options="chartOptions"
-        style="max-height:100px;"
-      />
+      <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height:100px;" />
     </article>
   </article>
 </template>
@@ -47,7 +41,7 @@ export default {
         },
         tooltips: {
           callbacks: {
-            label: function(tooltipItem, data) {
+            label: function (tooltipItem, data) {
               var label = data.datasets[tooltipItem.datasetIndex].label || "";
 
               if (label) {
@@ -123,6 +117,7 @@ export default {
             borderColor: "#556270",
             data: p,
             fill: false,
+            pointRadius: 1,
           },
         ],
       };

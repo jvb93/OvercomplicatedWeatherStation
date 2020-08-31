@@ -1,11 +1,7 @@
 <template>
   <article class="tile is-parent notification is-vertical is-white drop-shadow">
     <article class="tile is-child" v-if="dataCollection">
-      <line-chart
-        :chart-data="dataCollection"
-        :options="chartOptions"
-        style="max-height: 500px;"
-      />
+      <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height: 500px;" />
     </article>
   </article>
 </template>
@@ -29,7 +25,7 @@ export default {
         maintainAspectRatio: false,
         tooltips: {
           callbacks: {
-            label: function(tooltipItem, data) {
+            label: function (tooltipItem, data) {
               var label = data.datasets[tooltipItem.datasetIndex].label || "";
 
               if (label) {
@@ -75,6 +71,7 @@ export default {
             borderColor: "#F38630",
             data: temperatures,
             fill: false,
+            pointRadius: 1,
           },
           {
             label: "Humidity",
@@ -82,6 +79,7 @@ export default {
             borderColor: "#A7DBD8",
             data: humidity,
             fill: false,
+            pointRadius: 1,
           },
         ],
       };
