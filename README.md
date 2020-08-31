@@ -29,7 +29,7 @@ The sender is a TTGO T-Beam - an ESP32-based MCU which contains a ton of really 
 
 Additional parts:
 
-- SHT31 Temperature and Humidity sensor
+- BMP280 Temperature, Humidity, and Pressure sensor
 - Small solar panel
 
 The sender's job is to collect weather data and blast it over LoRa to anyone who's listening.
@@ -46,4 +46,4 @@ The API is an Express server on top of Node.js. This runs on a Docker host on my
 
 ### The Frontend
 
-he Frontend is written in Vue.js using Chart.js for data visualization and Bulma for css
+The Frontend is written in Vue.js using Chart.js for data visualization and Bulma for css
