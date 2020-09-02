@@ -107,8 +107,8 @@ void loop() {
    
   }
  
-  //reboot on a 10 minute interval
-  if(millis() > 600000)
+  //reboot on a 1 hour interval
+  if(millis() > 3600000)
   {
     Serial.println("resetting now!");
     Serial.flush();
