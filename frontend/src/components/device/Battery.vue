@@ -1,10 +1,12 @@
 <template>
   <article
     class="tile is-parent has-text-centered notification is-white drop-shadow"
-    v-if="battery"
+    v-if="battery && maxBattery"
   >
     <article class="tile is-5 is-child">
-      <h1 class="title is-1 has-text-weight-light">{{ battery[battery.length - 1] }}</h1>
+      <b-tooltip :label="batteryPercentage" type="is-dark" position="is-right">
+        <h1 class="title is-1 has-text-weight-light">{{ battery[battery.length - 1] }}</h1>
+      </b-tooltip>
       <p class="subtitle">Battery Voltage</p>
     </article>
     <article class="tile is-7 is-child">
@@ -26,6 +28,7 @@ export default {
     return {
       dataCollection: null,
       battery: null,
+      maxBattery: null,
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
@@ -70,7 +73,17 @@ export default {
       },
     };
   },
+  computed: {
+    batteryPercentage() {
+      if (this.battery && this.maxBattery) {
+        let currentMillivolts = this.battery[this.battery.length - 1] * 1000;
+        let rawPercent = (currentMillivolts / this.maxBattery[0].voltage) * 100;
+        return `${rawPercent.toFixed(2)}%`;
+      }
 
+      return null;
+    },
+  },
   methods: {
     async getData() {
       let host = config.value("backendHost");
@@ -97,6 +110,8 @@ export default {
           },
         ],
       };
+      let fetchedMaxBattery = await axios.get(`${host}/maxbattery`);
+      this.maxBattery = fetchedMaxBattery.data;
     },
   },
   mounted() {
