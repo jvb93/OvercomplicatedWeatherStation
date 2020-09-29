@@ -129,10 +129,15 @@ router.get("/maxbattery", async (req, res) => {
 
 router.post("/battery", jsonParser, async (req, res) => {
   try {
-    if (req.body.voltage != null && req.body.voltage == 0) {
+    if (
+      req.body.voltage == null ||
+      req.body.voltage < 1000 ||
+      req.body.voltage > 4500
+    ) {
       res.sendStatus(400);
       return;
     }
+
     const newBattery = new Battery(req.body);
     newBattery.save();
     res.sendStatus(201);
