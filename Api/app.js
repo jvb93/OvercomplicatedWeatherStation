@@ -81,12 +81,12 @@ router.get("/weather", async (req, res) => {
 
 router.post("/weather", jsonParser, (req, res) => {
   try {
-    if (req.body.relative_humidity != null && req.body.relative_humidity == 0) {
+    if (req.body.relative_humidity == null || req.body.relative_humidity < 1) {
       res.sendStatus(400);
       return;
     }
 
-    if (req.body.pressure != null && req.body.pressure == 0) {
+    if (req.body.pressure == null || req.body.pressure < 50000) {
       res.sendStatus(400);
       return;
     }
