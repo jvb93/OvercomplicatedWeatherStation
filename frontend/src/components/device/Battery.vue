@@ -5,12 +5,18 @@
   >
     <article class="tile is-5 is-child">
       <b-tooltip :label="batteryPercentage" type="is-dark" position="is-right">
-        <h1 class="title is-1 has-text-weight-light">{{ battery[battery.length - 1] }}</h1>
+        <h1 class="title is-1 has-text-weight-light">
+          {{ battery[battery.length - 1] }}
+        </h1>
       </b-tooltip>
       <p class="subtitle">Battery Voltage</p>
     </article>
     <article class="tile is-7 is-child">
-      <line-chart :chart-data="dataCollection" :options="chartOptions" style="max-height:100px;" />
+      <line-chart
+        :chart-data="dataCollection"
+        :options="chartOptions"
+        style="max-height: 100px"
+      />
     </article>
   </article>
 </template>
@@ -29,6 +35,7 @@ export default {
       dataCollection: null,
       battery: null,
       maxBattery: null,
+      minBattery: null,
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
@@ -75,9 +82,11 @@ export default {
   },
   computed: {
     batteryPercentage() {
-      if (this.battery && this.maxBattery) {
+      if (this.battery && this.maxBattery && this.minBattery) {
         let currentMillivolts = this.battery[this.battery.length - 1] * 1000;
-        let rawPercent = (currentMillivolts / this.maxBattery[0].voltage) * 100;
+        let normalizedMax =
+          this.maxBattery[0].voltage - this.minBattery[0].voltage;
+        let rawPercent = (currentMillivolts / normalizedMax) * 100;
         return `${rawPercent.toFixed(2)}%`;
       }
 
@@ -110,8 +119,11 @@ export default {
           },
         ],
       };
+
       let fetchedMaxBattery = await axios.get(`${host}/maxbattery`);
       this.maxBattery = fetchedMaxBattery.data;
+      let fetchedMinBattery = await axios.get(`${host}/minbattery`);
+      this.minBattery = fetchedMinBattery.data;
     },
   },
   mounted() {

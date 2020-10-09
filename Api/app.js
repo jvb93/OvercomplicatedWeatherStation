@@ -127,6 +127,18 @@ router.get("/maxbattery", async (req, res) => {
   }
 });
 
+router.get("/minbattery", async (req, res) => {
+  try {
+    let battery = await Battery.findAll({
+      limit: 1,
+      order: [["voltage", "ASC"]],
+    });
+    res.json(battery);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 router.post("/battery", jsonParser, async (req, res) => {
   try {
     if (
