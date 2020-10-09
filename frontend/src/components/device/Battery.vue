@@ -84,9 +84,11 @@ export default {
     batteryPercentage() {
       if (this.battery && this.maxBattery && this.minBattery) {
         let currentMillivolts = this.battery[this.battery.length - 1] * 1000;
+        let normalizedCurrentMillivolts =
+          currentMillivolts - this.minBattery[0].voltage;
         let normalizedMax =
           this.maxBattery[0].voltage - this.minBattery[0].voltage;
-        let rawPercent = (currentMillivolts / normalizedMax) * 100;
+        let rawPercent = (normalizedCurrentMillivolts / normalizedMax) * 100;
         return `${rawPercent.toFixed(2)}%`;
       }
 
